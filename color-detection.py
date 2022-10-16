@@ -21,7 +21,10 @@ def draw(mask, color, name):
 
 cap = cv2.VideoCapture(0)
 
-# COLOR DECLARATION BGR
+# COLOR DECLARATION HSV
+lowYellow = np.array([15, 100, 20], np.uint8)
+highYellow = np.array([45, 255, 255], np.uint8)
+
 lowBlue = np.array([100, 100, 20], np.uint8)
 highBlue = np.array([125, 255, 255], np.uint8)
 
@@ -30,17 +33,24 @@ highRed1 = np.array([8, 255, 255], np.uint8)
 lowRed2 = np.array([175, 100, 20], np.uint8)
 highRed2 = np.array([179, 255, 255], np.uint8)
 
+lowGreen = np.array([45, 100, 20], np.uint8)
+highGreen = np.array([75, 255, 255], np.uint8)
+
 while True:
     ret, frame = cap.read()
     if ret == True:
         frameHSV = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+        maskYellow = cv2.inRange(frameHSV,lowYellow, highYellow)
         maskBlue = cv2.inRange(frameHSV, lowBlue, highBlue)
         maskRed1 = cv2.inRange(frameHSV, lowRed1, highRed1)
         maskRed2 = cv2.inRange(frameHSV, lowRed2, highRed2)
         maskRed = cv2.add(maskRed1, maskRed2)
+        maskGreen = cv2.inRange(frameHSV, lowGreen, highGreen)
 
+        draw(maskYellow, (0, 255, 255), "Yellow")
         draw(maskBlue, (255, 0, 0), "Blue")
         draw(maskRed, (0, 0, 255), "Red")
+        draw(maskGreen, (0, 255, 0), "Green")
 
         cv2.imshow("Color detection", frame)
         if cv2.waitKey(1) & 0xFF == ord("s"):
